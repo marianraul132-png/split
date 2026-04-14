@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Split — Plan de antrenament</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #0f0f13; color: #e8e8f0; min-height: 100vh; padding-bottom: 3rem; }
+    .hero { text-align: center; padding: 3rem 1.5rem 2rem; background: linear-gradient(160deg, #1a1a2e 0%, #0f0f13 100%); border-bottom: 1px solid #1e1e2e; }
+    .hero h1 { font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 800; letter-spacing: -1px; background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero p { margin-top: .5rem; color: #6b7280; font-size: .95rem; letter-spacing: .05em; text-transform: uppercase; }
+    .nav { display: flex; justify-content: center; flex-wrap: wrap; gap: .5rem; padding: 1.5rem 1rem; position: sticky; top: 0; z-index: 100; background: rgba(15,15,19,.85); backdrop-filter: blur(12px); border-bottom: 1px solid #1e1e2e; }
+    .nav a { text-decoration: none; color: #9ca3af; font-weight: 600; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; padding: .45rem 1rem; border-radius: 999px; border: 1px solid #2a2a3e; transition: all .2s ease; }
+    .nav a:hover { color: #fff; border-color: #a78bfa; background: rgba(167,139,250,.08); }
+    .container { max-width: 720px; margin: 0 auto; padding: 2.5rem 1rem 0; display: flex; flex-direction: column; gap: 2rem; }
+    .card { border-radius: 20px; overflow: hidden; border: 1px solid #1e1e2e; background: #13131a; box-shadow: 0 8px 40px rgba(0,0,0,.4); transition: transform .2s ease, box-shadow .2s ease; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 16px 50px rgba(0,0,0,.5); }
+    .card-header { padding: 1.5rem 1.5rem 1.2rem; position: relative; overflow: hidden; }
+    .card-header::before { content: ''; position: absolute; inset: 0; opacity: .12; }
+    .day-upper .card-header { background: linear-gradient(135deg, #1a103a, #0f1a2e); }
+    .day-upper .card-header::before { background: linear-gradient(135deg, #a78bfa, #60a5fa); opacity: .15; }
+    .day-lower .card-header { background: linear-gradient(135deg, #0d1f15, #0a1a2a); }
+    .day-lower .card-header::before { background: linear-gradient(135deg, #34d399, #06b6d4); opacity: .15; }
+    .day-push .card-header { background: linear-gradient(135deg, #1f0d1a, #2a0d0a); }
+    .day-push .card-header::before { background: linear-gradient(135deg, #f472b6, #fb923c); opacity: .15; }
+    .day-pull .card-header { background: linear-gradient(135deg, #1a1000, #1f1500); }
+    .day-pull .card-header::before { background: linear-gradient(135deg, #fbbf24, #f97316); opacity: .15; }
+    .day-legs .card-header { background: linear-gradient(135deg, #1a0808, #200a0a); }
+    .day-legs .card-header::before { background: linear-gradient(135deg, #f87171, #ef4444); opacity: .15; }
+    .badge { display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: .25rem .7rem; border-radius: 999px; margin-bottom: .75rem; }
+    .day-upper .badge { background: rgba(167,139,250,.2); color: #c4b5fd; border: 1px solid rgba(167,139,250,.3); }
+    .day-lower .badge { background: rgba(52,211,153,.2); color: #6ee7b7; border: 1px solid rgba(52,211,153,.3); }
+    .day-push .badge { background: rgba(244,114,182,.2); color: #f9a8d4; border: 1px solid rgba(244,114,182,.3); }
+    .day-pull .badge { background: rgba(251,191,36,.2); color: #fde68a; border: 1px solid rgba(251,191,36,.3); }
+    .day-legs .badge { background: rgba(248,113,113,.2); color: #fca5a5; border: 1px solid rgba(248,113,113,.3); }
+    .day-number { font-size: .78rem; color: #6b7280; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+    .day-title { font-size: 1.6rem; font-weight: 800; letter-spacing: -.5px; margin: .2rem 0 .4rem; }
+    .day-meta { font-size: .8rem; color: #6b7280; }
+    .exercises { padding: .5rem 0 .5rem; }
+    .exercise { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid #1a1a27; transition: background .15s ease; }
+    .exercise:hover { background: rgba(255,255,255,.02); }
+    .ex-num { min-width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .8rem; flex-shrink: 0; margin-top: 2px; }
+    .day-upper .ex-num { background: rgba(167,139,250,.15); color: #c4b5fd; }
+    .day-lower .ex-num { background: rgba(52,211,153,.15); color: #6ee7b7; }
+    .day-push .ex-num { background: rgba(244,114,182,.15); color: #f9a8d4; }
+    .day-pull .ex-num { background: rgba(251,191,36,.15); color: #fde68a; }
+    .day-legs .ex-num { background: rgba(248,113,113,.15); color: #fca5a5; }
+    .ex-name { font-weight: 600; font-size: .95rem; margin-bottom: .4rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .35rem; }
+    .tag { font-size: .72rem; font-weight: 600; padding: .2rem .55rem; border-radius: 6px; background: #1e1e2e; color: #9ca3af; border: 1px solid #2a2a3e; letter-spacing: .03em; }
+    .ex-note { font-size: .8rem; color: #6b7280; line-height: 1.5; padding: .4rem .7rem; border-left: 2px solid #2a2a3e; margin-top: .25rem; }
+    .ex-note strong, .ex-note span { color: #9ca3af; }
+    footer { text-align: center; padding: 3rem 1rem 1rem; color: #374151; font-size: .78rem; }
+    @media (max-width: 480px) { .day-title { font-size: 1.3rem; } .exercise { padding: .85rem 1rem; } }
+  </style>
+</head>
+<body>
+<div class="hero"><h1>My Split</h1><p>Upper &middot; Lower &middot; Push &middot; Pull &middot; Legs</p></div>
+<nav class="nav" aria-label="Navigare zile">
+  <a href="#ziua1">Upper</a><a href="#ziua2">Lower</a><a href="#ziua3">Push</a><a href="#ziua4">Pull</a><a href="#ziua5">Legs</a>
+</nav>
+<div class="container">
+<section class="card day-upper" id="ziua1" aria-labelledby="title-ziua1">
+  <header class="card-header">
+    <div class="badge">&#11014; Upper</div>
+    <div class="day-number">Ziua 1</div>
+    <div id="title-ziua1" class="day-title">Upper Body</div>
+    <div class="day-meta">5 exercitii &middot; Compusi + Izolari</div>
+  </header>
+  <div class="exercises">
+    <div class="exercise"><div class="ex-num">1</div><div><div class="ex-name">Impins cu bara pe plan inclinat (45&deg;)</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">6&ndash;8 reps</span><span class="tag">failure</span></div><div class="ex-note"><strong>Priza putin mai ingusta</strong> &mdash; implica mai tare tricepsul</div></div></div>
+    <div class="exercise"><div class="ex-num">2</div><div><div class="ex-name">Fluturari la cabluri</div><div class="tags"><span class="tag">2 seturi</span><span class="tag">10&ndash;12 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">3</div><div><div class="ex-name">Tractiuni la liber</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">6&ndash;8 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">4</div><div><div class="ex-name">Ridicari laterale la cablu</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">8&ndash;10 reps</span></div><div class="ex-note">Stai usor inclinat spre scripete pentru ROM maxim</div></div></div>
+    <div class="exercise"><div class="ex-num">5</div><div><div class="ex-name">Ramat cu bara</div><div class="tags"><span class="tag">2 seturi</span><span class="tag">6&ndash;8 reps</span></div><div class="ex-note">Controlat pe negativ</div></div></div>
+  </div>
+</section>
+<section class="card day-lower" id="ziua2">
+  <header class="card-header">
+    <div class="badge">&#11015; Lower</div>
+    <div class="day-number">Ziua 2</div>
+    <div class="day-title">Lower Body</div>
+    <div class="day-meta">6 exercitii &middot; Quad + Hamstring + Gambe</div>
+  </header>
+  <div class="exercises">
+    <div class="exercise"><div class="ex-num">1</div><div><div class="ex-name">Flexii femural din culcat</div><div class="tags"><span class="tag">2 seturi</span><span class="tag">6&ndash;8 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">2</div><div><div class="ex-name">Genuflexiuni (bara/Smith)</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">6&ndash;8 reps</span></div><div class="ex-note">Primele 2 seturi la <strong>1&ndash;2 RIR</strong></div></div></div>
+    <div class="exercise"><div class="ex-num">3</div><div><div class="ex-name">Romanian Deadlift</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">6&ndash;8 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">4</div><div><div class="ex-name">Extensii cvadriceps</div><div class="tags"><span class="tag">2 seturi</span><span class="tag">8&ndash;10 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">5</div><div><div class="ex-name">Hip Abduction</div><div class="tags"><span class="tag">2 seturi</span><span class="tag">8&ndash;10 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">6</div><div><div class="ex-name">Ridicari pe varfuri (gambe)</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">8&ndash;10 reps</span></div></div></div>
+  </div>
+</section>
+<section class="card day-push" id="ziua3">
+  <header class="card-header">
+    <div class="badge">&#8599; Push</div>
+    <div class="day-number">Ziua 3</div>
+    <div class="day-title">Push</div>
+    <div class="day-meta">7 exercitii &middot; Piept + Umeri + Triceps</div>
+  </header>
+  <div class="exercises">
+    <div class="exercise"><div class="ex-num">1</div><div><div class="ex-name">Impins cu gantere din inclinat (45&deg;)</div><div class="tags"><span class="tag">3 seturi</span></div><div class="ex-note">Serie: 8 / 5 (cresci) / 15 (scazi)</div></div></div>
+    <div class="exercise"><div class="ex-num">2</div><div><div class="ex-name">Shoulder Press</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">10&ndash;12 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">3</div><div><div class="ex-name">Skull Crushers</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">6&ndash;8 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">4</div><div><div class="ex-name">Fluturari la cablu / aparat</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">10&ndash;12 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">5</div><div><div class="ex-name">Ridicari laterale (umeri)</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">20 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">6</div><div><div class="ex-name">Fluturari inverse &mdash; Rear Delt</div><div class="tags"><span class="tag">2 seturi</span><span class="tag">12&ndash;15 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">7</div><div><div class="ex-name">Diamond Push-Up</div><div class="tags"><span class="tag">1 serie</span><span class="tag">failure</span></div></div></div>
+  </div>
+</section>
+<section class="card day-pull" id="ziua4">
+  <header class="card-header">
+    <div class="badge">&#8601; Pull</div>
+    <div class="day-number">Ziua 4</div>
+    <div class="day-title">Pull</div>
+    <div class="day-meta">7 exercitii &middot; Spate + Biceps + Trapez</div>
+  </header>
+  <div class="exercises">
+    <div class="exercise"><div class="ex-num">1</div><div><div class="ex-name">1-Arm Half-Kneeling Lat Pulldown</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">12&ndash;15 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">2</div><div><div class="ex-name">Tractiuni la liber</div><div class="tags"><span class="tag">2 seturi</span><span class="tag">AMRAP</span></div><div class="ex-note">Progresie saptamanala: +1 rep</div></div></div>
+    <div class="exercise"><div class="ex-num">3</div><div><div class="ex-name">Ramat cu gantera</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">10&ndash;12 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">4</div><div><div class="ex-name">Shrugs</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">10&ndash;12 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">5</div><div><div class="ex-name">Fluturari inverse &mdash; Deltoid Posterior</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">10&ndash;12 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">6</div><div><div class="ex-name">Flexii biceps la cabluri</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">10&ndash;12 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">7</div><div><div class="ex-name">Flexii ciocan</div><div class="tags"><span class="tag">2 seturi</span><span class="tag">failure</span></div></div></div>
+  </div>
+</section>
+<section class="card day-legs" id="ziua5">
+  <header class="card-header">
+    <div class="badge">&#128293; Legs</div>
+    <div class="day-number">Ziua 5</div>
+    <div class="day-title">Legs</div>
+    <div class="day-meta">6 exercitii &middot; Full Lower &middot; Ziua grea</div>
+  </header>
+  <div class="exercises">
+    <div class="exercise"><div class="ex-num">1</div><div><div class="ex-name">Deadlift conventional / sumo</div><div class="tags"><span class="tag">1 set principal</span><span class="tag">5 reps</span></div><div class="ex-note">Incalzire: 8 &rarr; 4 &rarr; 2 reps</div></div></div>
+    <div class="exercise"><div class="ex-num">2</div><div><div class="ex-name">Presa picioare</div><div class="tags"><span class="tag">4 seturi</span><span class="tag">10&ndash;12 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">3</div><div><div class="ex-name">Flexii femural</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">8&ndash;10 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">4</div><div><div class="ex-name">Extensii cvadriceps</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">8&ndash;10 reps</span></div><div class="ex-note"><span>Negativ controlat</span> &mdash; nu lasa greutatea sa cada.</div></div></div>
+    <div class="exercise"><div class="ex-num">5</div><div><div class="ex-name">Ridicari gambe din asezat (aparat)</div><div class="tags"><span class="tag">4 seturi</span><span class="tag">15&ndash;20 reps</span></div></div></div>
+    <div class="exercise"><div class="ex-num">6</div><div><div class="ex-name">Core &mdash; Plank / Dead Bug / Hollow Hold</div><div class="tags"><span class="tag">3 seturi</span><span class="tag">30&ndash;45 sec</span></div><div class="ex-note"><span>Adaugat</span> &mdash; core stabil = transfer mai bun de forta la deadlift si squat.</div></div></div>
+  </div>
+</section>
+</div>
+<footer>Made with &#128170; &middot; My Split</footer>
+</body>
+</html>
